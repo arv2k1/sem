@@ -1,5 +1,24 @@
-this
-is
-a
-sample 
-file
+{
+  "range": "Sheet1!B2:B7",
+  "majorDimension": "ROWS",
+  "values": [
+    [
+      "415"
+    ],
+    [
+      "5"
+    ],
+    [
+      "143"
+    ],
+    [
+      "1"
+    ],
+    [
+      "2000"
+    ],
+    [
+      "910"
+    ]
+  ]
+}
