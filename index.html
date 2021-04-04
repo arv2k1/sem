@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<base target="_self">
+	<style>
+		/* * {
+			border: 1px solid red;
+		} */
+
+		html,
+		body {
+			height: 100%;
+		}
+
+		h1 {
+			text-align: center;
+			font-family: Courier New;
+			font-size: 45px;
+			color: #1f83e0;
+		}
+
+		p {
+			color: #FFFFFF;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			position: fixed;
+			bottom: -3.4%;
+			left: 0;
+		}
+
+		body {
+			margin: 0;
+			text-align: center;
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+			font-size: 17px;
+			background: #222222;
+			/* background: linear-gradient(45deg, #49a09d, #5f2c82); */
+			font-weight: 100;
+		}
+
+		.grid-center {
+			display: grid;
+			place-items: center;
+		}
+
+		.grid-top {
+			display: grid;
+			place-items: top;
+		}
+
+		table {
+			width: 400px;
+			border-collapse: collapse;
+			overflow: hidden;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+		}
+
+		th,
+		td {
+			padding: 18px;
+			background-color: rgba(255, 255, 255, 0.2);
+			color: #fff;
+		}
+
+
+		th {
+			background-color: #243b53;
+			/*98aa31*/
+			font-size: 20px;
+		}
+	</style>
+	<title>IoT Based Smart Energy Meter</title>
+</head>
+
+<body onload="myFunction()">
+	<div class="grid-top">
+		<h1>Smart Energy Meter</h1>
+	</div>
+
+	<div class="grid-center">
+		<table>
+			<thead>
+				<tr>
+					<th>PARAMETER</th>
+					<th>VALUE</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Voltage</td>
+					<td><span id="v"></span></td>
+				</tr>
+				<tr>
+					<td>Current</td>
+					<td><span id="c"></span></td>
+				</tr>
+				<tr>
+					<td>Frequency</td>
+					<td><span id="f"></span></td>
+				<tr>
+					<td>Power Factor</td>
+					<td><span id="pf"></span></td>
+				</tr>
+				<tr>
+					<td>Power</td>
+					<td><span id="p"></span></td>
+				</tr>
+				<tr>
+					<td>Energy</td>
+					<td><span id="e"></span></td>
+				</tr>
+				<tr>
+					<td>Bill Amount</td>
+					<td><span id="b"></span></td>
+				</tr>
+			</tbody>
+		</table>
+		<p><span id="msg">Loading...</span></p>
+	</div>
+
+	<script>
+		function myFunction() {
+			document.getElementById('msg').innerHTML = "myFunction was called";
+			setInterval(updateParams, 5 * 1000);
+		}
+
+		function updateParams() {
+			document.getElementById('msg').innerHTML = "Fetching Data";
+			google.script.run.withSuccessHandler(writeValues).getSheetData();
+		}
+
+		function writeValues(arr) {
+			document.getElementById('msg').innerHTML = "Updating Data";
+			document.getElementById('v').innerHTML = arr[0][0] + ' V';
+			document.getElementById('c').innerHTML = arr[1][0] + ' A';
+			document.getElementById('f').innerHTML = arr[2][0] + ' Hz';
+			document.getElementById('pf').innerHTML = arr[3][0];
+			document.getElementById('p').innerHTML = arr[4][0] + ' W';
+			document.getElementById('e').innerHTML = arr[5][0] + ' kWh';
+			document.getElementById('b').innerHTML = 'Rs.' + calculateBill(arr[5][0]);
+			document.getElementById('msg').innerHTML = "Updated";
+		}
+
+		function calculateBill(energy) {
+			// TNEB Tariff rates for domestic consumer
+			// Source : https://www.tangedco.gov.in/linkpdf/ONE_PAGE_STATEMENT.pdf
+			// 0 to 100   : Rs.0 per unit
+			// 101 to 200 : Rs.3.50 per unit
+			// 201 to 500 : Rs.4.60 per unit
+			// above 500  : Rs.6.60 per unit
+
+			if (energy <= 100)
+				return 0;
+
+			if (energy <= 200)
+				return (energy - 100) * 3.50;
+
+			if (energy <= 500)
+				return (0 + 100 * 3.50 + (energy - 200) * 4.60);
+
+			return (0 + 100 * 3.50 + 300 * 4.60 + (energy - 500) * 6.60);
+		}
+
+	</script>
+
+</body>
+
+</html>
