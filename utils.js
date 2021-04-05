@@ -1,7 +1,5 @@
-function myFunction() {
-    console.log('JS started');
-    setInterval(updateParams, 5 * 1000);
-}
+console.log('JS started');
+setInterval(updateParams, 5 * 1000);
 
 function updateParams() {
     console.log('Fetching the data');
@@ -10,7 +8,7 @@ function updateParams() {
     req.open("GET", "https://sheets.googleapis.com/v4/spreadsheets/1FAJIonMEJuFqgoAJkBlD7iUobrcCxxZjVH3vte7-I48/values/B2%3AB7?key=AIzaSyCNNTlGLjbAVl1rWmP_hfw8xEA2YWTf7zw");
     req.send();
 
-    req.onreadystatechange = function () {
+    req.onreadystatechange = function() {
         if (this.readyState == 4) {
             var obj = JSON.parse(this.responseText);
             console.log(obj.values);
